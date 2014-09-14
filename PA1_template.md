@@ -4,92 +4,114 @@ output: html_document
 
 ###Loading and preprocessing the data
 
-```{r loaddata,echo=TRUE}
 
+```r
 # read data
   maindata <- read.csv("D:/Rdata/reproduce/assign1/activity.csv",header=T)
-
 ```
 
 
 ###Mean of total number of steps taken by day
 
-```{r createhistogramfig,echo=TRUE,fig.path="figures/"}
 
+```r
 #Create histogram
 hist(maindata$steps)
-
 ```
 
-```{r calculatesteps,echo=TRUE}
+![plot of chunk createhistogramfig](figures/createhistogramfig.png) 
 
+
+```r
 #Mean
 mean(maindata[,1],na.rm=TRUE) 
+```
 
+```
+## [1] 37.38
+```
+
+```r
 #Median
 median(maindata[,1],na.rm=TRUE) 
+```
 
+```
+## [1] 0
 ```
 
 ###Average daily activity pattern
 
-```{r dailyactivitypattern,echo=TRUE}
 
+```r
 # select non missing values
 data <- maindata[complete.cases(maindata),]
 
 #aggregate the data, calculate means
 d <- aggregate(data$steps,list(interval=data$interval),mean)
 names(d)[2] <- "steps"
-
 ```
 
-```{r dailyactivitypatternfig,echo=TRUE,fig.path="figures/"}
+
+```r
 #plot aggregate data
 with(d,plot(interval,steps,type="l"))
-
 ```
+
+![plot of chunk dailyactivitypatternfig](figures/dailyactivitypatternfig.png) 
 
 The highest 5-minute interval, on average, is 835
 
 ###Imputing missing data
 
-```{r imputingmissingdata,echo=TRUE}
 
+```r
 #Sum cases with NA
 sum(!complete.cases(maindata))
+```
 
+```
+## [1] 2304
 ```
 
 Replace missing data by the value 0  
 
-```{r replacing0,echo=TRUE}
 
+```r
 #Create new data set
 newmaindata <- maindata
 
 #Replace NA by 0
 newmaindata[is.na(newmaindata)] <- 0
-
 ```
 
-```{r imputingmissingdatafig,echo=TRUE,fig.path="figures/"}
+
+```r
 #Create histogram
 hist(newmaindata$steps)
-
 ```
+
+![plot of chunk imputingmissingdatafig](figures/imputingmissingdatafig.png) 
 
 New mean and median of new data set
 
-```{r newmeanmedian,echo=TRUE}
 
+```r
 #Mean
 mean(newmaindata[,1]) 
+```
 
+```
+## [1] 32.48
+```
+
+```r
 #Median
 median(newmaindata[,1]) 
+```
 
-
+```
+## [1] 0
 ```
 
 The new mean is lower than the previous one since all the missing values have been replaced by 0.  
@@ -98,8 +120,8 @@ Imputing missing data has changed the average daily number of steps.
 
 ###Difference between Weekdays and Weekends
 
-```{r weekday,echo=TRUE}
 
+```r
 #Copy new data set with filled-in values
 m <- newmaindata
 
@@ -124,9 +146,10 @@ names(report)[3] <- "steps"
 library(lattice)
 ```
 
-```{r weekdayfig,echo=TRUE,fig.path="figures/"}
 
+```r
 #Plot report data
 xyplot(report$steps ~ report$interval|report$daycat,type="l")
-
 ```
+
+![plot of chunk weekdayfig](figures/weekdayfig.png) 
