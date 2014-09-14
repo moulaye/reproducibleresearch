@@ -1,0 +1,118 @@
+
+###Loading and preprocessing the data
+
+```{r loaddata,echo=TRUE}
+
+# read data
+  maindata <- read.csv("D:/Rdata/reproduce/assign1/activity.csv",header=T)
+
+```
+
+
+
+###Mean of Total number of steps taken by day
+
+```{r calculatesteps,echo=TRUE}
+
+#Create histogram
+hist(maindata$steps)
+
+#Mean
+mean(maindata[,1],na.rm=TRUE) 
+
+#Median
+median(maindata[,1],na.rm=TRUE) 
+
+```
+
+###Average Daily Activity Pattern
+
+```{r dailyactivitypattern,echo=TRUE}
+
+# select non missing values
+data <- maindata[complete.cases(maindata),]
+
+#aggregate the data, calculate means
+d <- aggregate(data$steps,list(interval=data$interval),mean)
+names(d)[2] <- "steps"
+
+#plot aggregate data
+with(d,plot(interval,steps,type="l"))
+
+```
+
+The highest 5-minute interval, on average, is 835
+
+###Imputing missing data
+
+```{r imputingmissingdata,echo=TRUE}
+
+#Sum cases with NA
+sum(!complete.cases(maindata))
+
+```
+
+Replace missing data by the value 0  
+
+```{r replacing0,echo=TRUE}
+
+#Create new data set
+newmaindata <- maindata
+
+#Replace NA by 0
+newmaindata[is.na(newmaindata)] <- 0
+
+#Create histogram
+hist(newmaindata$steps)
+
+
+```
+
+New mean and median of new data set
+
+```{r newmeanmedian,echo=TRUE}
+
+#Mean
+mean(newmaindata[,1]) 
+
+#Median
+median(newmaindata[,1]) 
+
+
+```
+
+The new mean is lower than the previous one since all the missing values have been replaced by 0.  
+The median stayed the same.  
+Imputing missing data has changed the average daily number of steps.  
+
+###Difference between Weekdays and Weekends
+
+```{r weekday,echo=TRUE}
+
+#Copy new data set with filled-in values
+m <- newmaindata
+
+#Convert to date format
+m$date <- as.Date(m$date)
+
+#Create a new field to store weekday values
+m$day <- weekdays(m$date)
+
+#Split weekdays into two groups: Weekend vs. Weekday
+m$daycat <- ifelse(m$day == "Sunday" | m$day == "Saturday",c("weekend"),c("weekday"))
+
+#Build aggregate date
+report <- aggregate(m$steps,by=list(m$daycat,m$interval),mean)
+
+#Rename variables
+names(report)[1] <- "daycat"
+names(report)[2] <- "interval"
+names(report)[3] <- "steps"
+
+#Load library Lattice
+library(lattice)
+
+#Plot report data
+xyplot(report$steps ~ report$interval|report$daycat,type="l")
+
+```
