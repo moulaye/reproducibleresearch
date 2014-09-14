@@ -9,13 +9,16 @@
 ```
 
 
+###Mean of total number of steps taken by day
 
-###Mean of Total number of steps taken by day
-
-```{r calculatesteps,echo=TRUE}
+```{r createhistogramfig,echo=TRUE,fig.path="figure/"}
 
 #Create histogram
 hist(maindata$steps)
+
+```
+
+```{r calculatesteps,echo=TRUE}
 
 #Mean
 mean(maindata[,1],na.rm=TRUE) 
@@ -25,7 +28,7 @@ median(maindata[,1],na.rm=TRUE)
 
 ```
 
-###Average Daily Activity Pattern
+###Average daily activity pattern
 
 ```{r dailyactivitypattern,echo=TRUE}
 
@@ -36,6 +39,9 @@ data <- maindata[complete.cases(maindata),]
 d <- aggregate(data$steps,list(interval=data$interval),mean)
 names(d)[2] <- "steps"
 
+```
+
+```{r dailyactivitypatternfig,echo=TRUE,fig.path="figure/"}
 #plot aggregate data
 with(d,plot(interval,steps,type="l"))
 
@@ -62,9 +68,11 @@ newmaindata <- maindata
 #Replace NA by 0
 newmaindata[is.na(newmaindata)] <- 0
 
+```
+
+```{r imputingmissingdatafig,echo=TRUE,fig.path="figure/"}
 #Create histogram
 hist(newmaindata$steps)
-
 
 ```
 
@@ -111,6 +119,9 @@ names(report)[3] <- "steps"
 
 #Load library Lattice
 library(lattice)
+```
+
+```{r weekdayfig,echo=TRUE,fig.path="figure/"}
 
 #Plot report data
 xyplot(report$steps ~ report$interval|report$daycat,type="l")
